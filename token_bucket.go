@@ -10,10 +10,8 @@ type TokenBucket struct {
 	clock     Clock
 }
 
-func NewTokenBucket(capacity, fillRate int, clock Clock) *TokenBucket {
-	if clock == nil {
-		clock = NewRealClock()
-	}
+func NewTokenBucket(capacity, fillRate int) *TokenBucket {
+	clock := NewRealClock()
 	now := clock.Now()
 	return &TokenBucket{
 		capacity:  capacity,

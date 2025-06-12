@@ -10,10 +10,8 @@ type FixedWindow struct {
 	clock           Clock
 }
 
-func NewFixedWindow(windowSize, maxRequests int, clock Clock) *FixedWindow {
-	if clock == nil {
-		clock = NewRealClock()
-	}
+func NewFixedWindow(windowSize, maxRequests int) *FixedWindow {
+	clock := NewRealClock()
 	return &FixedWindow{
 		windowSize:      windowSize,
 		maxRequests:     maxRequests,

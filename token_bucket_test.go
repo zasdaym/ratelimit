@@ -11,9 +11,11 @@ func TestNewTokenBucket(t *testing.T) {
 	var (
 		capacity = 10
 		fillRate = 5
-		clock    = NewFakeClock(time.Now())
-		bucket   = NewTokenBucket(capacity, fillRate, clock)
+		bucket   = NewTokenBucket(capacity, fillRate)
 	)
+
+	clock := NewFakeClock(time.Now())
+	bucket.clock = clock
 
 	if bucket.tokens != capacity {
 		t.Errorf("expected initial tokens %d, got %d", capacity, bucket.tokens)
@@ -26,9 +28,11 @@ func TestTokenBucketAllowInitialTokens(t *testing.T) {
 	var (
 		capacity = 3
 		fillRate = 1
-		clock    = NewFakeClock(time.Now())
-		bucket   = NewTokenBucket(capacity, fillRate, clock)
+		bucket   = NewTokenBucket(capacity, fillRate)
 	)
+
+	clock := NewFakeClock(time.Now())
+	bucket.clock = clock
 
 	for i := 0; i < capacity; i++ {
 		if !bucket.Allow() {
@@ -44,10 +48,10 @@ func TestTokenBucketAllowInitialTokens(t *testing.T) {
 func TestTokenBucketRefill(t *testing.T) {
 	t.Parallel()
 
-	var (
-		clock  = NewFakeClock(time.Now())
-		bucket = NewTokenBucket(2, 1, clock)
-	)
+	bucket := NewTokenBucket(2, 1)
+
+	clock := NewFakeClock(time.Now())
+	bucket.clock = clock
 
 	bucket.Allow()
 	bucket.Allow()
@@ -65,10 +69,10 @@ func TestTokenBucketRefill(t *testing.T) {
 func TestTokenBucketCapacityLimit(t *testing.T) {
 	t.Parallel()
 
-	var (
-		clock  = NewFakeClock(time.Now())
-		bucket = NewTokenBucket(2, 10, clock)
-	)
+	bucket := NewTokenBucket(2, 10)
+
+	clock := NewFakeClock(time.Now())
+	bucket.clock = clock
 
 	bucket.Allow()
 
@@ -89,10 +93,10 @@ func TestTokenBucketCapacityLimit(t *testing.T) {
 func TestTokenBucketZeroCapacity(t *testing.T) {
 	t.Parallel()
 
-	var (
-		clock  = NewFakeClock(time.Now())
-		bucket = NewTokenBucket(0, 1, clock)
-	)
+	bucket := NewTokenBucket(0, 1)
+
+	clock := NewFakeClock(time.Now())
+	bucket.clock = clock
 
 	if bucket.Allow() {
 		t.Error("request should be denied with zero capacity")
@@ -102,10 +106,10 @@ func TestTokenBucketZeroCapacity(t *testing.T) {
 func TestTokenBucketZeroFillRate(t *testing.T) {
 	t.Parallel()
 
-	var (
-		clock  = NewFakeClock(time.Now())
-		bucket = NewTokenBucket(1, 0, clock)
-	)
+	bucket := NewTokenBucket(1, 0)
+
+	clock := NewFakeClock(time.Now())
+	bucket.clock = clock
 
 	if !bucket.Allow() {
 		t.Error("first request should be allowed")
@@ -120,10 +124,10 @@ func TestTokenBucketZeroFillRate(t *testing.T) {
 func TestTokenBucketConcurrentAccess(t *testing.T) {
 	t.Parallel()
 
-	var (
-		clock  = NewFakeClock(time.Now())
-		bucket = NewTokenBucket(100, 10, clock)
-	)
+	bucket := NewTokenBucket(100, 10)
+
+	clock := NewFakeClock(time.Now())
+	bucket.clock = clock
 
 	done := make(chan bool, 2)
 
