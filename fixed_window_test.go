@@ -11,7 +11,7 @@ func TestFixedWindowAllow(t *testing.T) {
 	var (
 		windowSize  = 2
 		maxRequests = 5
-		clock       = NewMockClock(time.Now())
+		clock       = NewFakeClock(time.Now())
 		bucket      = NewFixedWindow(windowSize, maxRequests, clock)
 	)
 
